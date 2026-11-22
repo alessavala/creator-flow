@@ -235,7 +235,7 @@ function CreatorDetail() {
       {creator.portfolioItems && creator.portfolioItems.length > 0 && (
         <div>
           <h2 className="mb-3 text-lg font-semibold">Portfolio</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {creator.portfolioItems.map((item) => (
               <SocialEmbed key={item.id} item={item} />
             ))}
