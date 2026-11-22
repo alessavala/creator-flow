@@ -13,6 +13,8 @@ interface FormState {
   bio: string;
   country: string;
   city: string;
+  age: string;
+  isParent: boolean;
   profilePhotoUrl: string;
   turnaroundDays: string;
   baseRate: string;
@@ -27,6 +29,8 @@ function toFormState(creator: CreatorProfile | null): FormState {
     bio: creator?.bio ?? "",
     country: creator?.country ?? "",
     city: creator?.city ?? "",
+    age: creator?.age ? String(creator.age) : "",
+    isParent: creator?.isParent ?? false,
     profilePhotoUrl: creator?.profilePhotoUrl ?? "",
     turnaroundDays: String(creator?.turnaroundDays ?? 14),
     baseRate: creator?.baseRate ? String(creator.baseRate) : "",
@@ -57,6 +61,8 @@ export function BasicInfoForm({ creator, onSaved }: { creator: CreatorProfile | 
           bio: form.bio || undefined,
           country: form.country,
           city: form.city || undefined,
+          age: form.age ? Number(form.age) : undefined,
+          isParent: form.isParent,
           profilePhotoUrl: form.profilePhotoUrl || undefined,
           turnaroundDays: Number(form.turnaroundDays) || 14,
           baseRate: form.baseRate ? Number(form.baseRate) : undefined,
@@ -94,6 +100,22 @@ export function BasicInfoForm({ creator, onSaved }: { creator: CreatorProfile | 
           <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
         </div>
       </div>
+      <div className="rounded-2xl border border-border bg-background p-4">
+        <p className="mb-3 text-sm font-semibold">Sobre mí — visible en mi Creator Passport</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="creator-age" className="mb-1.5 block text-sm font-medium">Edad (opcional)</label>
+            <Input id="creator-age" type="number" min={18} max={100} placeholder="Ej. 30" value={form.age}
+              onChange={(e) => setForm({ ...form, age: e.target.value })} />
+          </div>
+          <label className="flex items-center gap-3 self-end rounded-xl border border-border bg-card p-3 text-sm">
+            <input type="checkbox" checked={form.isParent} onChange={(e) => setForm({ ...form, isParent: e.target.checked })}
+              className="size-4 accent-teal-600" />
+            Mostrar «Soy papá / mamá» en mi perfil
+          </label>
+        </div>
+        <p className="mt-2 text-xs text-muted">Solo se publican los datos que decidas compartir.</p>
+      </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium">Foto de perfil (URL)</label>
         <Input type="url" value={form.profilePhotoUrl} onChange={(e) => setForm({ ...form, profilePhotoUrl: e.target.value })} placeholder="https://…" />
@@ -118,12 +140,12 @@ export function BasicInfoForm({ creator, onSaved }: { creator: CreatorProfile | 
             value={form.baseRate}
             onChange={(e) => setForm({ ...form, baseRate: e.target.value })}
           />
-          <p className="mt-1 text-xs text-muted">Lo que cobrás por colaboración - las marcas lo ven en tu perfil.</p>
+          <p className="mt-1 text-xs text-muted">Lo que cobras por colaboración; las marcas lo ven en tu perfil.</p>
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-medium">Tipos de colaboración que aceptás</p>
+        <p className="mb-2 text-sm font-medium">Tipos de colaboración que aceptas</p>
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={form.acceptsProduct} onChange={(e) => setForm({ ...form, acceptsProduct: e.target.checked })} />
