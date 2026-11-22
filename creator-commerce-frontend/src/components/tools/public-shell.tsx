@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth-context";
 // passports) - a lightweight header/footer instead of the authenticated
 // AppShell (sidebar + auth guard), which would redirect anonymous visitors
 // straight to /login and defeat the point of a public, shareable page.
-export function PublicShell({ children }: { children: React.ReactNode }) {
+export function PublicShell({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
   const { user } = useAuth();
 
   return (
@@ -37,7 +37,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-8">{children}</main>
+      <main className={`mx-auto flex w-full flex-1 flex-col gap-6 px-4 py-8 sm:px-8 ${wide ? "max-w-6xl" : "max-w-4xl"}`}>{children}</main>
 
       <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted sm:px-8">
         creator.hub · Marketplace P2P de marcas y creadores
