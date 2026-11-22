@@ -16,6 +16,7 @@ import { ApiError } from "@/lib/api";
 import { translateApiError } from "@/lib/error-messages";
 import { useAuth } from "@/lib/auth-context";
 import type { UserRole } from "@/lib/types";
+import { redirectAfterAuth } from "@/lib/redirect-after-auth";
 
 export default function RegisterPage() {
   return (
@@ -41,7 +42,7 @@ function RegisterForm() {
     setIsSubmitting(true);
     try {
       await register(email, password, role);
-      router.replace("/creators");
+      router.replace(redirectAfterAuth(searchParams.get("next")));
     } catch (err) {
       setError(err instanceof ApiError ? translateApiError(err.message) : "No pudimos crear tu cuenta. Intentá de nuevo.");
     } finally {
@@ -104,7 +105,7 @@ function RegisterForm() {
           </form>
 
           <div className="mt-6">
-            <SocialLoginButtons role={role} onSuccess={() => router.replace("/creators")} onError={(msg) => setError(msg)} />
+            <SocialLoginButtons role={role} onSuccess={() => router.replace(redirectAfterAuth(searchParams.get("next")))} onError={(msg) => setError(msg)} />
           </div>
         </Card>
 
