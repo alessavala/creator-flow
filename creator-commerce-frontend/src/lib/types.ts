@@ -73,6 +73,8 @@ export interface CreatorProfile {
   bio: string | null;
   country: string;
   city: string | null;
+  age?: number | null;
+  isParent?: boolean;
   profilePhotoUrl: string | null;
   turnaroundDays: number;
   baseRate: string | null;
