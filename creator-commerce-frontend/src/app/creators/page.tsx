@@ -161,7 +161,7 @@ function CreatorsDiscovery() {
             <div className="flex flex-wrap gap-2">
               {[undefined, 100, 250, 500, 1000].map((value) => (
                 <Chip key={value ?? "any"} active={maxRate === value} onClick={() => updateFilter(() => setMaxRate(value))}>
-                  {value === undefined ? "Cualquier tarifa" : `Hasta ${value}`}
+                  {value === undefined ? "Cualquier tarifa" : `Hasta USD ${value}`}
                 </Chip>
               ))}
             </div>
