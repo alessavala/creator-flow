@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, BadgeCheck, CheckCircle2, Send, ShoppingBag } from "lucide-react";
 import { PublicShell } from "@/components/tools/public-shell";
+import { CampaignWizard } from "@/components/campaign-wizard";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatCurrency } from "@/lib/format";
@@ -29,6 +30,9 @@ function HireCreator() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
+  const [draftCampaign, setDraftCampaign] = useState<Campaign | null>(null);
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
     if (!token || user?.role !== "BRAND" || !params.id) return;
@@ -120,9 +124,36 @@ function HireCreator() {
               <p className="text-sm leading-6 text-muted">
                 Creator Flow envía invitaciones vinculadas a campañas. Crea tu campaña, publícala y regresa al perfil del creador.
               </p>
-              <Link href="/campaigns" className="inline-flex w-fit rounded-xl bg-[#0F766E] px-5 py-3 text-sm font-bold text-white">
-                Crear o publicar campaña
-              </Link>
+              {draftCampaign ? (
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <p className="font-semibold">{draftCampaign.name}</p>
+                  <p className="mt-1 text-xs text-muted">Campaña guardada como borrador. Debes publicarla para invitar al creador.</p>
+                  <button type="button" disabled={publishing} onClick={async () => {
+                    if (!token) return;
+                    setPublishing(true);
+                    setError("");
+                    try {
+                      const updated = await apiFetch<Campaign>(`/campaigns/${draftCampaign.id}/status`, {
+                        method: "PATCH", token, body: { status: "PUBLISHED" },
+                      });
+                      setCampaigns((prev) => [updated, ...prev]);
+                      setCampaignId(updated.id);
+                      setDraftCampaign(null);
+                    } catch (err) {
+                      setError(err instanceof ApiError ? err.message : "No se pudo publicar la campaña.");
+                    } finally {
+                      setPublishing(false);
+                    }
+                  }} className="mt-3 rounded-xl bg-[#0F766E] px-5 py-3 text-sm font-bold text-white disabled:opacity-50">
+                    {publishing ? "Publicando…" : "Publicar campaña y continuar"}
+                  </button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => setShowWizard(true)}
+                  className="inline-flex w-fit rounded-xl bg-[#0F766E] px-5 py-3 text-sm font-bold text-white">
+                  Crear campaña para este creador
+                </button>
+              )}
               <Link href="/profile" className="text-xs text-muted underline">¿Necesitas completar el perfil de tu marca?</Link>
             </div>
           ) : (
@@ -174,6 +205,15 @@ function HireCreator() {
           )}
           {error && campaigns.length === 0 && <p role="alert" className="mt-3 text-sm text-red-600">{error}</p>}
         </div>
+      )}
+      {showWizard && (
+        <CampaignWizard
+          onClose={() => setShowWizard(false)}
+          onCreated={(campaign) => {
+            setShowWizard(false);
+            setDraftCampaign(campaign);
+          }}
+        />
       )}
     </div>
   );
