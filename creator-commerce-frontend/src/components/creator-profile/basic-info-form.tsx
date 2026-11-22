@@ -14,7 +14,7 @@ interface FormState {
   country: string;
   city: string;
   age: string;
-  isParent: boolean;
+  familyRole: string;
   profilePhotoUrl: string;
   turnaroundDays: string;
   baseRate: string;
@@ -30,7 +30,7 @@ function toFormState(creator: CreatorProfile | null): FormState {
     country: creator?.country ?? "",
     city: creator?.city ?? "",
     age: creator?.age ? String(creator.age) : "",
-    isParent: creator?.isParent ?? false,
+    familyRole: creator?.familyRole ?? '',
     profilePhotoUrl: creator?.profilePhotoUrl ?? "",
     turnaroundDays: String(creator?.turnaroundDays ?? 14),
     baseRate: creator?.baseRate ? String(creator.baseRate) : "",
@@ -62,7 +62,7 @@ export function BasicInfoForm({ creator, onSaved }: { creator: CreatorProfile | 
           country: form.country,
           city: form.city || undefined,
           age: form.age ? Number(form.age) : undefined,
-          isParent: form.isParent,
+          familyRole: form.familyRole || undefined,
           profilePhotoUrl: form.profilePhotoUrl || undefined,
           turnaroundDays: Number(form.turnaroundDays) || 14,
           baseRate: form.baseRate ? Number(form.baseRate) : undefined,
@@ -108,11 +108,16 @@ export function BasicInfoForm({ creator, onSaved }: { creator: CreatorProfile | 
             <Input id="creator-age" type="number" min={18} max={100} placeholder="Ej. 30" value={form.age}
               onChange={(e) => setForm({ ...form, age: e.target.value })} />
           </div>
-          <label className="flex items-center gap-3 self-end rounded-xl border border-border bg-card p-3 text-sm">
-            <input type="checkbox" checked={form.isParent} onChange={(e) => setForm({ ...form, isParent: e.target.checked })}
-              className="size-4 accent-teal-600" />
-            Mostrar «Soy papá / mamá» en mi perfil
-          </label>
+          <div>
+            <label htmlFor="creator-family" className="mb-1.5 block text-sm font-medium">Identidad familiar (opcional)</label>
+            <select id="creator-family" className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm"
+              value={form.familyRole} onChange={(e) => setForm({ ...form, familyRole: e.target.value })}>
+              <option value="">No mostrar</option>
+              <option value="PAPA">Papá</option>
+              <option value="MAMA">Mamá</option>
+              <option value="FAMILIA">Familia</option>
+            </select>
+          </div>
         </div>
         <p className="mt-2 text-xs text-muted">Solo se publican los datos que decidas compartir.</p>
       </div>
