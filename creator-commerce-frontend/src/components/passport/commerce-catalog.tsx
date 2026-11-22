@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ExternalLink, Film, PackageOpen, Play, Search, SlidersHorizontal, Star, X } from "lucide-react";
+import { ExternalLink, Film, PackageOpen, Play, Search, SlidersHorizontal } from "lucide-react";
 import { SiFacebook, SiInstagram, SiTiktok, SiYoutube } from "react-icons/si";
 import { SocialEmbed } from "@/components/social-embed";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
