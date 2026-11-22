@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, BadgeCheck, CheckCircle2, Send, ShoppingBag } from "lucide-react";
-import { AppShell } from "@/components/app-shell";
+import { PublicShell } from "@/components/tools/public-shell";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatCurrency } from "@/lib/format";
@@ -12,9 +12,9 @@ import type { Campaign, CreatorProfile, Paginated } from "@/lib/types";
 
 export default function HireCreatorPage() {
   return (
-    <AppShell>
+    <PublicShell>
       <HireCreator />
-    </AppShell>
+    </PublicShell>
   );
 }
 
