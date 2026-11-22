@@ -41,11 +41,12 @@ export class CreatorSearchDto extends PaginationDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) minAverageViews?: number;
   @IsOptional() @Type(() => Number) @Min(0) @Max(1) minEngagementRate?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100) minCreatorScore?: number;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(0) maxBaseRate?: number;
   @IsOptional() @IsEnum(VerificationLevel) verificationLevel?: VerificationLevel;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsProduct?: boolean;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsFixedFee?: boolean;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsCommission?: boolean;
-  @IsOptional() @IsEnum(['reliabilityScore', 'followers', 'createdAt'] as const) sortBy?: 'reliabilityScore' | 'followers' | 'createdAt';
+  @IsOptional() @IsIn(['reliabilityScore', 'createdAt', 'baseRateAsc', 'baseRateDesc', 'followers']) sortBy?: 'reliabilityScore' | 'createdAt' | 'baseRateAsc' | 'baseRateDesc' | 'followers';
 }
 
 export class CreateSocialAccountDto {
