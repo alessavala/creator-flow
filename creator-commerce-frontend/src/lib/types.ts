@@ -74,7 +74,7 @@ export interface CreatorProfile {
   country: string;
   city: string | null;
   age?: number | null;
-  isParent?: boolean;
+  familyRole?: 'PAPA' | 'MAMA' | 'FAMILIA' | null;
   profilePhotoUrl: string | null;
   turnaroundDays: number;
   baseRate: string | null;
