@@ -135,6 +135,8 @@ model CreatorProfile {
   bio               String?
   country           String
   city              String?
+  age               Int?
+  isParent          Boolean           @default(false)
   profilePhotoUrl   String?
   baseRate          Decimal?          @db.Decimal(12, 2)
   turnaroundDays    Int               @default(14)
