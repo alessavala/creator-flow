@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -20,7 +21,7 @@ export class UpsertCreatorDto {
   @IsString() country: string;
   @IsOptional() @IsString() city?: string;
   @IsOptional() @IsInt() @Min(18) @Max(100) age?: number;
-  @IsOptional() @IsBoolean() isParent?: boolean;
+  @IsOptional() @IsIn(['PAPA', 'MAMA', 'FAMILIA']) familyRole?: string;
   @IsOptional() @IsUrl() profilePhotoUrl?: string;
   @IsOptional() @IsInt() @Min(1) turnaroundDays?: number;
   @IsOptional() @IsNumber() @Min(0) baseRate?: number;
