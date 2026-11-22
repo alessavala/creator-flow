@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { SocialLoginButtons } from "@/components/social-login-buttons";
 import { ApiError } from "@/lib/api";
+import { redirectAfterAuth } from "@/lib/redirect-after-auth";
 import { translateApiError } from "@/lib/error-messages";
 import { useAuth } from "@/lib/auth-context";
 
@@ -28,7 +29,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      router.replace("/creators");
+      router.replace(redirectAfterAuth(new URLSearchParams(window.location.search).get("next")));
     } catch (err) {
       setError(err instanceof ApiError ? translateApiError(err.message) : "No pudimos iniciar sesión. Intentá de nuevo.");
     } finally {
@@ -76,7 +77,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6">
-            <SocialLoginButtons onSuccess={() => router.replace("/creators")} onError={(msg) => setError(msg)} />
+            <SocialLoginButtons onSuccess={() => router.replace(redirectAfterAuth(new URLSearchParams(window.location.search).get("next")))} onError={(msg) => setError(msg)} />
           </div>
         </Card>
 
