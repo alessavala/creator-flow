@@ -281,5 +281,6 @@ export interface CreatorSearchParams {
   minCreatorScore?: number;
   maxBaseRate?: number;
   verificationLevel?: VerificationLevel;
+  verifiedOnly?: boolean;
   sortBy?: "reliabilityScore" | "followers" | "createdAt" | "baseRateAsc" | "baseRateDesc";
 }
