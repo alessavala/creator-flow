@@ -63,7 +63,12 @@ export class CreatorsService {
     const { page, pageSize, skip, take } = paginationArgs(q);
 
     const where: Prisma.CreatorProfileWhereInput = {
-      displayName: q.q ? { contains: q.q, mode: 'insensitive' } : undefined,
+      OR: q.q ? [
+        { displayName: { contains: q.q, mode: 'insensitive' } },
+        { bio: { contains: q.q, mode: 'insensitive' } },
+        { categories: { some: { category: { name: { contains: q.q, mode: 'insensitive' } } } } },
+        { portfolioItems: { some: { title: { contains: q.q, mode: 'insensitive' } } } },
+      ] : undefined,
       country: q.country,
       city: q.city,
       categories: q.category ? { some: { category: { slug: q.category } } } : undefined,
@@ -73,6 +78,7 @@ export class CreatorsService {
       acceptsFixedFee: q.acceptsFixedFee,
       acceptsCommission: q.acceptsCommission,
       reliabilityScore: q.minCreatorScore !== undefined ? { gte: q.minCreatorScore } : undefined,
+      baseRate: q.maxBaseRate !== undefined ? { lte: q.maxBaseRate } : undefined,
       socialAccounts:
         q.platform || q.minFollowers !== undefined || q.minAverageViews !== undefined || q.minEngagementRate !== undefined
           ? {
@@ -87,7 +93,10 @@ export class CreatorsService {
     };
 
     const orderBy: Prisma.CreatorProfileOrderByWithRelationInput =
-      q.sortBy === 'createdAt' ? { createdAt: 'desc' } : { reliabilityScore: 'desc' };
+      q.sortBy === 'createdAt' ? { createdAt: 'desc' } :
+      q.sortBy === 'baseRateAsc' ? { baseRate: { sort: 'asc', nulls: 'last' } } :
+      q.sortBy === 'baseRateDesc' ? { baseRate: { sort: 'desc', nulls: 'last' } } :
+      { reliabilityScore: 'desc' };
 
     // A single query with `include` lets Prisma batch the relation fetches
     // (socialAccounts/marketplaces/categories) into one extra round-trip
@@ -95,7 +104,7 @@ export class CreatorsService {
     const [data, total] = await Promise.all([
       this.prisma.creatorProfile.findMany({
         where,
-        include: { socialAccounts: true, marketplaces: true, categories: { include: { category: true } } },
+        include: { socialAccounts: true, marketplaces: true, categories: { include: { category: true } }, portfolioItems: { take: 1, orderBy: { createdAt: 'desc' } } },
         orderBy,
         skip,
         take,
