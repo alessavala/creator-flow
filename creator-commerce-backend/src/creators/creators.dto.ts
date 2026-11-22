@@ -20,8 +20,8 @@ export class UpsertCreatorDto {
   @IsOptional() @IsString() bio?: string;
   @IsString() country: string;
   @IsOptional() @IsString() city?: string;
-  @IsOptional() @IsInt() @Min(18) @Max(100) age?: number;
-  @IsOptional() @IsIn(['PAPA', 'MAMA', 'FAMILIA']) familyRole?: string;
+  @IsOptional() @IsInt() @Min(18) @Max(100) age?: number | null;
+  @IsOptional() @IsIn(['PAPA', 'MAMA', 'FAMILIA']) familyRole?: string | null;
   @IsOptional() @IsUrl() profilePhotoUrl?: string;
   @IsOptional() @IsInt() @Min(1) turnaroundDays?: number;
   @IsOptional() @IsNumber() @Min(0) baseRate?: number;
