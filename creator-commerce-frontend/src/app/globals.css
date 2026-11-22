@@ -186,3 +186,114 @@
     font-feature-settings: "cv11", "ss01";
   }
 }
+
+
+/* Commerce motion: decorative UGC / ecommerce backdrop for the public Passport.
+   It does not visualize actual campaign performance. */
+.cf-hero .cf-motion {
+  z-index: 0;
+}
+
+.cf-motion-orb {
+  position: absolute;
+  width: 25rem;
+  height: 25rem;
+  border-radius: 9999px;
+  filter: blur(88px);
+  animation: cf-orbit 19s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.cf-motion-orb-a {
+  top: -13rem;
+  right: -8rem;
+  background: rgba(20, 184, 166, 0.20);
+}
+.cf-motion-orb-b {
+  bottom: -16rem;
+  left: 15%;
+  background: rgba(37, 99, 235, 0.15);
+  animation-duration: 24s;
+  animation-direction: alternate-reverse;
+}
+.cf-motion-chart {
+  position: absolute;
+  right: -3%;
+  bottom: -26%;
+  width: min(66%, 700px);
+  height: auto;
+  opacity: 0.75;
+  transform: rotate(-3deg);
+}
+.cf-motion-line {
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: cf-draw 4s ease-out forwards;
+}
+.cf-motion-pulse {
+  transform-origin: center;
+  animation: cf-pulse 3s ease-in-out infinite;
+}
+.cf-motion-pill {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(94, 234, 212, 0.19);
+  border-radius: 0.85rem;
+  background: rgba(13, 47, 63, 0.55);
+  padding: 0.55rem 0.8rem;
+  color: rgba(226, 250, 246, 0.78);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.025em;
+  backdrop-filter: blur(10px);
+  animation: cf-float 15s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.cf-motion-pill-one { top: 15%; right: 7%; animation-delay: -4s; }
+.cf-motion-pill-two { bottom: 16%; right: 16%; animation-delay: -10s; animation-duration: 19s; }
+.cf-motion-pill-three { top: 35%; right: 29%; animation-delay: -7s; animation-duration: 21s; }
+.cf-motion-pill-four { bottom: 12%; right: 39%; animation-delay: -2s; animation-duration: 17s; }
+.cf-motion-grain {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.11) 0.65px, transparent 0.65px);
+  background-size: 18px 18px;
+  opacity: 0.12;
+}
+@keyframes cf-orbit {
+  from { transform: translate3d(-20px, 0, 0); }
+  to { transform: translate3d(60px, 32px, 0); }
+}
+@keyframes cf-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cf-pulse {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 0.25; }
+}
+@keyframes cf-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-14px, 12px, 0); }
+}
+@media (max-width: 1023px) {
+  .cf-motion-chart { width: 85%; right: -20%; bottom: -12%; opacity: 0.55; }
+  .cf-motion-pill-three, .cf-motion-pill-four { display: none; }
+}
+@media (max-width: 639px) {
+  .cf-motion-chart { width: 125%; right: -65%; bottom: -4%; opacity: 0.38; }
+  .cf-motion-pill { font-size: 0.6rem; padding: 0.45rem 0.6rem; }
+  .cf-motion-pill-one { right: 4%; top: 12%; }
+  .cf-motion-pill-two { right: 5%; bottom: 10%; }
+  .cf-motion-orb { width: 18rem; height: 18rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cf-motion-orb,
+  .cf-motion-line,
+  .cf-motion-pulse,
+  .cf-motion-pill {
+    animation: none !important;
+    will-change: auto;
+  }
+  .cf-motion-line { stroke-dashoffset: 0; }
+}
