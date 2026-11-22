@@ -73,7 +73,7 @@ export class CreatorsService {
       city: q.city,
       categories: q.category ? { some: { category: { slug: q.category } } } : undefined,
       marketplaces: q.marketplace ? { some: { marketplace: q.marketplace, verified: true } } : undefined,
-      verificationLevel: q.verificationLevel,
+      verificationLevel: q.verifiedOnly ? { in: ['IDENTITY', 'VERIFIED_COMMERCE', 'PRO'] } : q.verificationLevel,
       acceptsProduct: q.acceptsProduct,
       acceptsFixedFee: q.acceptsFixedFee,
       acceptsCommission: q.acceptsCommission,
