@@ -14,7 +14,7 @@ import { apiFetch, ApiError } from "@/lib/api";
 import { translateApiError } from "@/lib/error-messages";
 import { useAuth } from "@/lib/auth-context";
 import { useFavoriteIds } from "@/lib/use-favorites";
-import type { Category, CreatorProfile, Marketplace, Paginated, VerificationLevel } from "@/lib/types";
+import type { Category, CreatorProfile, Marketplace, Paginated } from "@/lib/types";
 
 const MARKETPLACE_OPTIONS: { value: Marketplace; label: string; icon: string }[] = [
   { value: "AMAZON", label: "Amazon", icon: "📦" },
@@ -37,6 +37,8 @@ function CreatorsDiscovery() {
   const [search, setSearch] = useState("");
   const [marketplace, setMarketplace] = useState<Marketplace | undefined>();
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [maxRate, setMaxRate] = useState<number | undefined>();
+  const [sortBy, setSortBy] = useState<"reliabilityScore" | "createdAt" | "baseRateAsc" | "baseRateDesc">("reliabilityScore");
   const [showFilters, setShowFilters] = useState(false);
   const [categorySlug, setCategorySlug] = useState<string | undefined>();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -63,7 +65,9 @@ function CreatorsDiscovery() {
           q: search || undefined,
           marketplace,
           category: categorySlug,
-          verificationLevel: verifiedOnly ? ("IDENTITY" as VerificationLevel) : undefined,
+          verifiedOnly: verifiedOnly || undefined,
+          maxBaseRate: maxRate,
+          sortBy,
           page,
           pageSize: 12,
         },
@@ -74,7 +78,7 @@ function CreatorsDiscovery() {
     } finally {
       setIsLoading(false);
     }
-  }, [token, search, marketplace, categorySlug, verifiedOnly, page]);
+  }, [token, search, marketplace, categorySlug, verifiedOnly, maxRate, sortBy, page]);
 
   useEffect(() => {
     // Refetching whenever a filter/page changes is the whole point of this
@@ -91,10 +95,14 @@ function CreatorsDiscovery() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Creadores</h1>
-        <p className="text-sm text-muted">Buscá creadores por nombre, categoría o marketplace.</p>
-      </div>
+      <header className="relative isolate overflow-hidden rounded-[24px] bg-[#0B1220] px-6 py-8 text-white sm:px-9 sm:py-10">
+        <span className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-[#14B8A6]/20 blur-3xl" />
+        <div className="relative z-10">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5EEAD4]">Creator Flow · E-commerce</p>
+          <h1 className="mt-3 text-3xl font-extrabold tracking-[-0.045em] sm:text-[40px]">Encuentra creadores que venden con contenido</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#CBD5E1]">Explora especialistas UGC para reseñas, unboxings, demostraciones y anuncios de productos. Compara portafolios y solicita una colaboración.</p>
+        </div>
+      </header>
 
       <form
         onSubmit={(e) => {
@@ -108,8 +116,8 @@ function CreatorsDiscovery() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar creador por nombre…"
-          className="h-12 rounded-full pl-10"
+          placeholder="Buscar creadores, productos, reseñas, unboxings…"
+          className="h-12 rounded-xl pl-10"
         />
       </form>
 
@@ -132,8 +140,32 @@ function CreatorsDiscovery() {
         </Chip>
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-border bg-card p-3 sm:px-4">
+        <p className="text-xs text-muted">{result ? `${result.meta.total} ${result.meta.total === 1 ? "creador encontrado" : "creadores encontrados"}` : "Explora especialistas UGC"}</p>
+        <label className="flex items-center gap-2 text-xs font-semibold">
+          Ordenar:
+          <select value={sortBy} onChange={(e) => updateFilter(() => setSortBy(e.target.value as typeof sortBy))}
+            className="rounded-xl border border-border bg-background px-3 py-2 text-xs focus-visible:outline-2 focus-visible:outline-[#14B8A6]">
+            <option value="reliabilityScore">Mejor Creator Score</option>
+            <option value="baseRateAsc">Menor tarifa</option>
+            <option value="baseRateDesc">Mayor tarifa</option>
+            <option value="createdAt">Más recientes</option>
+          </select>
+        </label>
+      </div>
+
       {showFilters && (
-        <Card className="p-4">
+        <Card className="rounded-[20px] p-4">
+          <div className="mb-4">
+            <p className="mb-2 text-sm font-medium">Presupuesto máximo (USD)</p>
+            <div className="flex flex-wrap gap-2">
+              {[undefined, 100, 250, 500, 1000].map((value) => (
+                <Chip key={value ?? "any"} active={maxRate === value} onClick={() => updateFilter(() => setMaxRate(value))}>
+                  {value === undefined ? "Cualquier tarifa" : `Hasta ${value}`}
+                </Chip>
+              ))}
+            </div>
+          </div>
           <p className="mb-2 text-sm font-medium">Categoría</p>
           <div className="flex flex-wrap gap-2">
             <Chip active={!categorySlug} onClick={() => updateFilter(() => setCategorySlug(undefined))}>
@@ -152,7 +184,7 @@ function CreatorsDiscovery() {
       {favorites.error && <p className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">{favorites.error}</p>}
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex flex-col gap-3">
               <Skeleton className="aspect-square w-full rounded-xl" />
@@ -165,11 +197,11 @@ function CreatorsDiscovery() {
         <EmptyState
           icon={UserX}
           title="No encontramos creadores con esos filtros"
-          description="Probá ajustando la búsqueda o quitando algún filtro."
+          description="Prueba ajustar la búsqueda, cambiar el presupuesto o quitar filtros."
         />
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {result?.data.map((creator) => (
               <CreatorCard
                 key={creator.id}
