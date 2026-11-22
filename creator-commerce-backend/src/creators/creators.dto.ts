@@ -43,6 +43,7 @@ export class CreatorSearchDto extends PaginationDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100) minCreatorScore?: number;
   @IsOptional() @Type(() => Number) @IsNumber() @Min(0) maxBaseRate?: number;
   @IsOptional() @IsEnum(VerificationLevel) verificationLevel?: VerificationLevel;
+  @IsOptional() @Type(() => Boolean) @IsBoolean() verifiedOnly?: boolean;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsProduct?: boolean;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsFixedFee?: boolean;
   @IsOptional() @IsBoolean() @Type(() => Boolean) acceptsCommission?: boolean;
