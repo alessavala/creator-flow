@@ -1,0 +1,49 @@
+name: Creator Flow pre-deploy checks
+
+on:
+  pull_request:
+    paths:
+      - 'creator-commerce-frontend/**'
+      - 'creator-commerce-backend/**'
+      - '.github/workflows/creator-flow-checks.yml'
+  push:
+    branches:
+      - 'feat/passport-amazon-commerce-experience'
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: creator-commerce-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: creator-commerce-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+          NEXT_PUBLIC_WS_URL: http://localhost:4000
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: creator-commerce-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: creator-commerce-backend/package-lock.json
+      - run: npm ci
+      - run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
+      - run: npm run prisma:generate
+      - run: npm run build
