@@ -16,9 +16,14 @@ export function PublicShell({ children, mainClassName }: { children: React.React
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header className="flex items-center justify-between px-4 py-4 sm:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <Logo />
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo />
+          </Link>
+          <Link href="/blog" className="hidden text-sm font-medium text-muted hover:text-foreground sm:block">
+            Blog
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           {user ? (
             <Link href="/dashboard">

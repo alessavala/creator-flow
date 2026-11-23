@@ -57,7 +57,12 @@ export default function Home() {
       </div>
 
       <header className="flex items-center justify-between px-4 py-4 sm:px-8">
-        <Logo />
+        <div className="flex items-center gap-6">
+          <Logo />
+          <Link href="/blog" className="hidden text-sm font-medium text-muted hover:text-foreground sm:block">
+            Blog
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <Link href="/login">
             <Button variant="ghost">Iniciar sesión</Button>
