@@ -1,4 +1,4 @@
-{$FRONTEND_DOMAIN} {
+{$FRONTEND_DOMAIN}, www.{$FRONTEND_DOMAIN} {
 	reverse_proxy frontend:3000
 }
 

@@ -38,9 +38,9 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
-    # No `ports:` here on purpose - EasyPanel's own Traefik proxy reaches
-    # this container over the project's internal network. Point the
-    # "backend" service's Domain at container port 4000 in the EasyPanel UI.
+    # No `ports:` here on purpose - only the `caddy` service below is
+    # published to the host; it reaches this container over the project's
+    # internal Docker network by service name (backend:4000).
 
   frontend:
     build:
@@ -55,8 +55,30 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
-    # Same as backend: no `ports:`. Point the "frontend" service's Domain
-    # at container port 3000 in the EasyPanel UI.
+    # Same as backend: no `ports:`, reached by `caddy` as frontend:3000.
+
+  # Public ingress: terminates HTTPS and reverse-proxies the two domains to
+  # the frontend/backend containers. Caddy requests/renews its own Let's
+  # Encrypt certificates automatically the first time each domain resolves
+  # here - no certbot, no manual cert handling.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
 
 volumes:
   creator_postgres:
+  caddy_data:
+  caddy_config:
